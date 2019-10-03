@@ -35,7 +35,7 @@ dim=${dims[$dim_id]}
 seed=${seeds[$seed_id]}
 k=${ks[k_id]}
 
-data_dir=../aheat/datasets/${dataset}
+data_dir=../heat/datasets/${dataset}
 edgelist=${data_dir}/edgelist.tsv
 features=${data_dir}/feats.csv
 embedding_dir=embeddings/${dataset}/recon_experiment
