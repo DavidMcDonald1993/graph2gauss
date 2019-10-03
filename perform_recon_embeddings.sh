@@ -1,8 +1,8 @@
 #!/bin/bash
 
-#SBATCH --job-name=embeddingsNC
-#SBATCH --output=embeddingsNC_%A_%a.out
-#SBATCH --error=embeddingsNC_%A_%a.err
+#SBATCH --job-name=embeddingsRECON
+#SBATCH --output=embeddingsRECON_%A_%a.out
+#SBATCH --error=embeddingsRECON_%A_%a.err
 #SBATCH --array=0-1199
 #SBATCH --time=3-00:00:00
 #SBATCH --ntasks=1
@@ -11,7 +11,7 @@
 
 e=5
 
-scales=(False True)
+scales=("" True)
 datasets=({cora_ml,citeseer,pubmed})
 dims=(5 10 25 50)
 seeds=({0..9})
