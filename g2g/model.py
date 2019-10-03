@@ -80,11 +80,9 @@ class Graph2Gauss:
             hops = get_hops(A_train, K)
         else:
             hops = get_hops(A, K)
-
         scale_terms = {h if h != -1 else max(hops.keys()) + 1:
                            hops[h].sum(1).A1 if h != -1 else hops[1].shape[0] - hops[h].sum(1).A1
                        for h in hops}
-
         self.__build()
         self.__dataset_generator(hops, scale_terms)
         self.__build_loss()
@@ -220,7 +218,9 @@ class Graph2Gauss:
                 yield to_triplets(sample_all_hops(hops), scale_terms)
 
         dataset = tf.data.Dataset.from_generator(gen, (tf.int32, tf.float32), ([None, 3], [None]))
+        
         self.triplets, self.scale_terms = dataset.prefetch(1).make_one_shot_iterator().get_next()
+
 
     def __save_vars(self, sess):
         """

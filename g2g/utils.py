@@ -429,6 +429,7 @@ def sample_all_hops(hops, nodes=None):
 
 
 def to_triplets(sampled_hops, scale_terms):
+
     """
     Form all valid triplets (pairwise constraints) from a set of sampled nodes in triplets
 
@@ -454,7 +455,6 @@ def to_triplets(sampled_hops, scale_terms):
         triplets.append(triplet)
 
         triplet_scale_terms.append(scale_terms[i][triplet[:, 1]] * scale_terms[j][triplet[:, 2]])
-
     return np.row_stack(triplets), np.concatenate(triplet_scale_terms)
 
 
