@@ -11,7 +11,7 @@
 
 e=5
 
-scales=("" True)
+scales=(False True)
 datasets=({cora_ml,citeseer,pubmed})
 dims=(5 10 25 50)
 seeds=({0..9})

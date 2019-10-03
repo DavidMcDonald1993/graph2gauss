@@ -90,7 +90,7 @@ def parse_args():
 	parser.add_argument("--embedding", dest="embedding_path", default=None, 
 		help="path to save embedings.")
 
-	parser.add_argument('--scale', dest="scale", type=bool, default=False,
+	parser.add_argument('--scale', dest="scale", type=str, default="False",
 		help='flag to scale pairs')
 
 	args = parser.parse_args()
@@ -111,7 +111,7 @@ def main():
 
 	g2g = Graph2Gauss(A=A, X=X, L=args.embedding_dim, 
 		K=args.k, verbose=True, p_val=0.0, p_test=0.0, p_nodes=0,
-		seed=args.seed, scale=args.scale)
+		seed=args.seed, scale=args.scale=="True")
 	sess = g2g.train()
 
 	mu, sigma = sess.run([g2g.mu, g2g.sigma])
