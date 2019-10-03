@@ -1,8 +1,8 @@
 #!/bin/bash
 
-#SBATCH --job-name=embeddingsRECON
-#SBATCH --output=embeddingsRECON_%A_%a.out
-#SBATCH --error=embeddingsRECON_%A_%a.err
+#SBATCH --job-name=embeddingsLP
+#SBATCH --output=embeddingsLP_%A_%a.out
+#SBATCH --error=embeddingsLP_%A_%a.err
 #SBATCH --array=0-1199
 #SBATCH --time=3-00:00:00
 #SBATCH --ntasks=1
