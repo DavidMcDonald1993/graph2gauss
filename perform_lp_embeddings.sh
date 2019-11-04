@@ -32,13 +32,12 @@ dim=${dims[$dim_id]}
 seed=${seeds[$seed_id]}
 k=${ks[k_id]}
 
-data_dir=../HEDnet/${dataset}
+data_dir=../HEDNet/${dataset}
 edgelist=$(printf ../HEDnet/edgelists/${dataset}/seed=%03d/training_edges/edgelist.tsv ${seed})
 features=${data_dir}/feats.csv
 embedding_dir=embeddings/${dataset}/lp_experiment
 
 embedding_dir=$(printf "${embedding_dir}/scale=${scale}/k=${k}/seed=%03d/dim=%03d/" ${seed} ${dim})
-# echo ${embedding_dir}
 
 if [ ! -f ${embedding_dir}"mu.csv" ]
 then 
@@ -49,8 +48,6 @@ then
 	args=$(echo --edgelist ${edgelist} --features ${features} \
 	--embedding ${embedding_dir} --seed ${seed} --dim ${dim} \
 	"-k" ${k} "--scale" ${scale})
-
-	# echo $args
 
 	python embed.py ${args}
 fi

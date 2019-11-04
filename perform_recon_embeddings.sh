@@ -8,9 +8,6 @@
 #SBATCH --ntasks=1
 #SBATCH --mem=16G
 
-
-e=5
-
 scales=(False True)
 datasets=({cora_ml,citeseer,pubmed})
 dims=(5 10 25 50)
@@ -35,7 +32,7 @@ dim=${dims[$dim_id]}
 seed=${seeds[$seed_id]}
 k=${ks[k_id]}
 
-data_dir=../heat/datasets/${dataset}
+data_dir=../HEDNet/datasets/${dataset}
 edgelist=${data_dir}/edgelist.tsv
 features=${data_dir}/feats.csv
 embedding_dir=embeddings/${dataset}/recon_experiment
