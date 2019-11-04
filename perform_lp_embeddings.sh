@@ -33,7 +33,7 @@ seed=${seeds[$seed_id]}
 k=${ks[k_id]}
 
 data_dir=../HEDNet/${dataset}
-edgelist=$(printf ../HEDnet/edgelists/${dataset}/seed=%03d/training_edges/edgelist.tsv ${seed})
+edgelist=$(printf ../HEDNet/edgelists/${dataset}/seed=%03d/training_edges/edgelist.tsv ${seed})
 features=${data_dir}/feats.csv
 embedding_dir=embeddings/${dataset}/lp_experiment
 
