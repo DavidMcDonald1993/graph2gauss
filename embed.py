@@ -1,3 +1,4 @@
+import numpy as np
 import networkx as nx 
 import pandas as pd
 import scipy.sparse as sp
@@ -7,6 +8,7 @@ from g2g.model import Graph2Gauss
 import argparse
 import os
 
+import pickle as pkl
 
 def load_data(args):
 
@@ -107,7 +109,14 @@ def main():
 	graph, features, _ = load_data(args)
 
 	A = nx.adjacency_matrix(graph, nodelist=sorted(graph))
-	X = sp.csr_matrix(features)
+	
+	if features is None:
+		print ("using identity features")
+		features = np.identity(len(graph))
+		X = sp.csr_matrix(features)
+	else: 
+		X = features
+	assert isinstance(X, sp.csr_matrix)
 
 	g2g = Graph2Gauss(A=A, X=X, L=args.embedding_dim, 
 		K=args.k, verbose=True, p_val=0.0, p_test=0.0, p_nodes=0,
@@ -115,11 +124,6 @@ def main():
 	sess = g2g.train()
 
 	mu, sigma = sess.run([g2g.mu, g2g.sigma])
-
-	# print ("mu shape", mu.shape)
-	# print ("sigma shape", sigma.shape)
-
-	# print (sigma.min(), sigma.max())
 
 	mu_filename = os.path.join(args.embedding_path, "mu.csv")
 	sigma_filename = os.path.join(args.embedding_path, "sigma.csv")
