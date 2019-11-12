@@ -33,7 +33,7 @@ seed=${seeds[$seed_id]}
 k=${ks[k_id]}
 
 data_dir=../HEDNet/datasets/synthetic_scale_free/${dataset}
-edgelist=$(printf ../HEDNet/edgelists/${dataset}/seed=%03d/training_edges/edgelist.tsv ${seed})
+edgelist=$(printf ../HEDNet/edgelists/synthetic_scale_free/${dataset}/seed=%03d/training_edges/edgelist.tsv ${seed})
 embedding_dir=embeddings/synthetic_scale_free/${dataset}/lp_experiment
 
 embedding_dir=$(printf "${embedding_dir}/scale=${scale}/k=${k}/seed=%03d/dim=%03d/" ${seed} ${dim})
