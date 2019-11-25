@@ -38,7 +38,7 @@ embedding_dir=embeddings/synthetic_scale_free/${dataset}/lp_experiment
 
 embedding_dir=$(printf "${embedding_dir}/scale=${scale}/k=${k}/seed=%03d/dim=%03d/" ${seed} ${dim})
 
-if [ ! -f ${embedding_dir}"mu.csv" ]
+if [ ! -f ${embedding_dir}"mu.csv.gz" ]
 then 
 	module purge
 	module load bluebear
