@@ -16,7 +16,6 @@ do
                     do 
 
                         embedding_dir=$(printf embeddings/synthetic_scale_free/${dataset}/${exp}/scale=${scale}/k=${k}/seed=%03d/dim=%03d ${seed} ${dim})
-                        echo $embedding_dir
 
                         if [ -f ${embedding_dir}/mu.csv ] 
                         then
