@@ -3,7 +3,7 @@
 #SBATCH --job-name=GRAPH2GAUSSembeddingsLP
 #SBATCH --output=GRAPH2GAUSSembeddingsLP_%A_%a.out
 #SBATCH --error=GRAPH2GAUSSembeddingsLP_%A_%a.err
-#SBATCH --array=0-750
+#SBATCH --array=0-749
 #SBATCH --time=3-00:00:00
 #SBATCH --ntasks=1
 #SBATCH --mem=20G
@@ -34,9 +34,7 @@ k=${ks[k_id]}
 
 data_dir=../HEDNet/datasets/${dataset}
 edgelist=$(printf ../HEDNet/edgelists/${dataset}/seed=%03d/training_edges/edgelist.tsv ${seed})
-# features=${data_dir}/feats.csv
 embedding_dir=embeddings/${dataset}/lp_experiment
-
 embedding_dir=$(printf "${embedding_dir}/scale=${scale}/k=${k}/seed=%03d/dim=%03d/" ${seed} ${dim})
 
 if [ ! -f ${embedding_dir}"mu.csv.gz" ]
