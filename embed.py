@@ -125,8 +125,8 @@ def main():
 
 	mu, sigma = sess.run([g2g.mu, g2g.sigma])
 
-	mu_filename = os.path.join(args.embedding_path, "mu.csv")
-	sigma_filename = os.path.join(args.embedding_path, "sigma.csv")
+	mu_filename = os.path.join(args.embedding_path, "mu.csv.gz")
+	sigma_filename = os.path.join(args.embedding_path, "sigma.csv.gz")
 
 	mu_df = pd.DataFrame(mu, index=sorted(graph.nodes))
 	sigma_df = pd.DataFrame(sigma, index=sorted(graph.nodes))
