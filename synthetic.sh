@@ -24,7 +24,7 @@ dataset_id=$((SLURM_ARRAY_TASK_ID / (num_exps * num_ks * num_seeds * num_dims) %
 dim_id=$((SLURM_ARRAY_TASK_ID / (num_exps * num_ks * num_seeds) % num_dims))
 seed_id=$((SLURM_ARRAY_TASK_ID / (num_exps * num_ks) % num_seeds ))
 k_id=$((SLURM_ARRAY_TASK_ID / num_exps % num_ks ))
-exp_id=$(((SLURM_ARRAY_TASK_ID % num_exps ))
+exp_id=$((SLURM_ARRAY_TASK_ID % num_exps ))
 
 scale=False
 dataset=${datasets[$dataset_id]}
