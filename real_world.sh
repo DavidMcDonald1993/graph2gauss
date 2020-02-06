@@ -45,7 +45,7 @@ fi
 
 echo edgelist is $edgelist
 
-embedding_dir=embeddings/${dataset}/${exp}
+embedding_dir=embeddings/${dataset}/nofeats/${exp}
 
 embedding_dir=$(printf "${embedding_dir}/scale=${scale}/k=${k}/seed=%03d/dim=%03d" ${seed} ${dim})
 
@@ -55,11 +55,27 @@ if [ ! -f ${embedding_dir}/"mu.csv.gz" ]
 then 
 	module purge
 	module load bluebear
-	module load TensorFlow/1.10.1-foss-2018b-Python-3.6.6
 
-	args=$(echo --edgelist ${edgelist} \
-	--embedding ${embedding_dir} --seed ${seed} --dim ${dim} \
-	"-k" ${k} "--scale" ${scale})
+	if [ ! -f ${embedding_dir}/"mu.csv" ]
+	then
 
-	python embed.py ${args}
+		module load TensorFlow/1.10.1-foss-2018b-Python-3.6.6
+
+		args=$(echo --edgelist ${edgelist} \
+		--embedding ${embedding_dir} --seed ${seed} --dim ${dim} \
+		"-k" ${k} "--scale" ${scale})
+
+		python embed.py ${args}
+
+	fi
+
+	echo ${embedding_dir}/"mu.csv" exists compressing
+	gzip ${embedding_dir}/"mu.csv"
+	gzip ${embedding_dir}/"sigma.csv"
+
+else
+
+	echo ${embedding_dir}/"mu.csv.gz" already exists
+	echo ${embedding_dir}/"sigma.csv.gz" already exists
+
 fi

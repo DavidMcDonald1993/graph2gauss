@@ -26,7 +26,8 @@ def main():
             "dim={:03d}".format(dim)
         )
 
-        filename = os.path.join(embedding_directory, "{}.csv.gz".format(matrix))
+        filename = os.path.join(embedding_directory, 
+            "{}.csv.gz".format(matrix))
 
         try:
             pd.read_csv(filename)
