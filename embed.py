@@ -116,7 +116,8 @@ def main():
 		X = sp.csr_matrix(features)
 	else: 
 		X = features
-	assert isinstance(X, sp.csr_matrix)
+	if not isinstance(X, sp.csr_matrix):
+		X = sp.csr_matrix(X)
 
 	g2g = Graph2Gauss(A=A, X=X, L=args.embedding_dim, 
 		K=args.k, verbose=True, p_val=0.0, p_test=0.0, p_nodes=0,
