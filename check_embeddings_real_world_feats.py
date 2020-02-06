@@ -6,10 +6,10 @@ from pandas.errors import EmptyDataError
 
 def main():
 
-    datasets = ("cora_ml", "citeseer", "pubmed", "email", "wiki_vote")
+    datasets = ("cora_ml", "citeseer", "pubmed", )
     dims = (2, 5, 10, 25, 50)
     seeds = range(30)
-    exps = ["recon_experiment", "lp_experiment"]
+    exps = ["recon_experiment", "lp_experiment", "rn_experiment"]
     ks = (3, )
     matrices = ["mu", "sigma"]
     scales = ("False", )
@@ -18,7 +18,7 @@ def main():
         datasets, dims, seeds, exps, ks, matrices, scales
     ):
         embedding_directory = os.path.join(
-            "embeddings", "no_feats",
+            "embeddings", "feats",
             dataset, exp, 
             "scale={}".format(scale),
             "k={:02d}".format(k),
