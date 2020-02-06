@@ -19,7 +19,7 @@ def main():
     ):
         embedding_directory = os.path.join(
             "embeddings", "no_feats",
-            "{:02d}".format(dataset), exp, 
+            dataset, exp, 
             "scale={}".format(scale),
             "k={:02d}".format(k),
             "seed={:03d}".format(seed),
