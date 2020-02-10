@@ -48,7 +48,7 @@ fi
 
 echo edgelist is $edgelist
 
-features=${data_dir}/features.csv
+features=${data_dir}/feats.csv
 
 embedding_dir=embeddings/${dataset}/feats/${exp}
 
