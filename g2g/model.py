@@ -56,8 +56,11 @@ class Graph2Gauss:
         if p_nodes > 0:
             A = self.__setup_inductive(A, X, p_nodes)
         else:
-            self.X = tf.SparseTensor(*sparse_feeder(X))
-            self.feed_dict = None
+            # self.X = tf.SparseTensor(*sparse_feeder(X))
+            # self.feed_dict = None
+            self.X = tf.sparse_placeholder(tf.float32)
+            self.feed_dict = {self.X: sparse_feeder(X)}
+
 
         self.N, self.D = X.shape
         self.L = L
@@ -242,7 +245,7 @@ class Graph2Gauss:
             Tensorflow session used for training
         """
         for name in self.saved_vars:
-                sess.run(tf.assign(self.saved_vars[name][0], self.saved_vars[name][1]))
+            sess.run(tf.assign(self.saved_vars[name][0], self.saved_vars[name][1]))
 
     def train(self, gpu_list='0'):
         """
@@ -269,6 +272,7 @@ class Graph2Gauss:
         sess.run(tf.global_variables_initializer())
 
         for epoch in range(self.max_iter):
+
             loss, _ = sess.run([self.loss, train_op], self.feed_dict)
 
             if self.val_early_stopping:

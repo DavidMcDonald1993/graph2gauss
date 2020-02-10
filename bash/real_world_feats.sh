@@ -1,8 +1,8 @@
 #!/bin/bash
 
-#SBATCH --job-name=G2GembeddingsREALWORLDFEATS
-#SBATCH --output=G2GembeddingsREALWORLDFEATS_%A_%a.out
-#SBATCH --error=G2GembeddingsREALWORLDFEATS_%A_%a.err
+#SBATCH --job-name=G2GFEATS
+#SBATCH --output=G2GFEATS_%A_%a.out
+#SBATCH --error=G2GFEATS_%A_%a.err
 #SBATCH --array=0-1349
 #SBATCH --time=10-00:00:00
 #SBATCH --ntasks=1

@@ -3,12 +3,18 @@ import networkx as nx
 import pandas as pd
 import scipy.sparse as sp
 
+
+
 from g2g.model import Graph2Gauss
 
 import argparse
 import os
 
 import pickle as pkl
+
+
+from g2g.utils import sparse_feeder
+import tensorflow as tf
 
 def load_data(args):
 
@@ -17,7 +23,7 @@ def load_data(args):
 	labels_filename = args.labels
 
 	graph = nx.read_weighted_edgelist(edgelist_filename, delimiter="\t", nodetype=int,
-		create_using=nx.DiGraph() )
+		create_using=nx.DiGraph() if args.directed else nx.Graph())
 
 	zero_weight_edges = [(u, v) for u, v, w in graph.edges(data="weight") if w == 0.]
 	print ("removing", len(zero_weight_edges), "edges with 0. weight")
@@ -35,11 +41,21 @@ def load_data(args):
 
 		if features_filename.endswith(".csv"):
 			features = pd.read_csv(features_filename, index_col=0, sep=",")
-			features = features.reindex(sorted(graph.nodes())).values
+			features = [features.reindex(sorted(graph)).values, 
+				features.reindex(sorted(features.index)).values]
+			print ("no scaling applied")
+			# scaler = StandardScaler()
+			# scaler.fit(features[0])
+			# features = list(map(scaler.transform,
+			# 	features))
 		else:
 			raise Exception
 
-		print ("features shape is {}\n".format(features.shape))
+		from scipy.sparse import csr_matrix
+		features = tuple(map(csr_matrix, features))
+
+		print ("training features shape is {}".format(features[0].shape))
+		print ("all features shape is {}\n".format(features[1].shape))
 
 	else: 
 		features = None
@@ -63,6 +79,9 @@ def load_data(args):
 
 	else:
 		labels = None
+
+	graph = nx.convert_node_labels_to_integers(graph, 
+		ordering="sorted")
 
 	return graph, features, labels
 
@@ -101,6 +120,7 @@ def parse_args():
 def main():
 
 	args = parse_args()
+	args.directed = True
 
 	if not os.path.exists(args.embedding_path):
 		print ("making", args.embedding_path)
@@ -115,7 +135,9 @@ def main():
 		features = np.identity(len(graph))
 		X = sp.csr_matrix(features)
 	else: 
-		X = features
+		assert isinstance(features, tuple)
+		assert len(features) == 2
+		X = features[0]
 	if not isinstance(X, sp.csr_matrix):
 		X = sp.csr_matrix(X)
 
@@ -124,7 +146,11 @@ def main():
 		seed=args.seed, scale=args.scale=="True")
 	sess = g2g.train()
 
-	mu, sigma = sess.run([g2g.mu, g2g.sigma])
+	# predict using entire features matrix
+	all_feats = sparse_feeder(features[1])
+
+	mu, sigma = sess.run([g2g.mu, g2g.sigma],
+		feed_dict={g2g.X: all_feats})
 
 	mu_filename = os.path.join(args.embedding_path, 
 		"mu.csv")

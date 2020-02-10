@@ -1,17 +1,17 @@
 #!/bin/bash
 
-#SBATCH --job-name=G2GembeddingsSYNTHETIC
-#SBATCH --output=G2GembeddingsSYNTHETIC_%A_%a.out
-#SBATCH --error=G2GembeddingsSYNTHETIC_%A_%a.err
+#SBATCH --job-name=G2GREALWORLD
+#SBATCH --output=G2GREALWORLD_%A_%a.out
+#SBATCH --error=G2GREALWORLD_%A_%a.err
 #SBATCH --array=0-1499
 #SBATCH --time=10-00:00:00
 #SBATCH --ntasks=1
-#SBATCH --mem=20G
+#SBATCH --mem=25G
 
-datasets=({00..29})
+datasets=(cora_ml citeseer pubmed wiki_vote email)
 dims=(2 5 10 25 50)
-seeds=(0)
-ks=(02 03 04 05 06)
+seeds=({00..29})
+ks=(03)
 exps=(lp_experiment recon_experiment)
 
 num_datasets=${#datasets[@]}
@@ -35,17 +35,17 @@ exp=${exps[$exp_id]}
 
 echo $dataset $dim $seed $k $exp
 
-data_dir=../HEDNet/datasets/synthetic_scale_free/${dataset}
+data_dir=../HEDNet/datasets/${dataset}
 if [ $exp == "recon_experiment" ]
 then 
 	edgelist=${data_dir}/edgelist.tsv
 else 
-	edgelist=$(printf ../HEDNet/edgelists/synthetic_scale_free/${dataset}/seed=%03d/training_edges/edgelist.tsv ${seed})
+	edgelist=$(printf ../HEDNet/edgelists/${dataset}/seed=%03d/training_edges/edgelist.tsv ${seed})
 fi
 
 echo edgelist is $edgelist
 
-embedding_dir=embeddings/synthetic_scale_free/${dataset}/${exp}
+embedding_dir=embeddings/${dataset}/nofeats/${exp}
 
 embedding_dir=$(printf "${embedding_dir}/scale=${scale}/k=${k}/seed=%03d/dim=%03d" ${seed} ${dim})
 
@@ -66,15 +66,16 @@ then
 		"-k" ${k} "--scale" ${scale})
 
 		python embed.py ${args}
+
 	fi
 
 	echo ${embedding_dir}/"mu.csv" exists compressing
 	gzip ${embedding_dir}/"mu.csv"
 	gzip ${embedding_dir}/"sigma.csv"
 
-else 
+else
 
-	echo  ${embedding_dir}/"mu.csv.gz" already exists
-	echo  ${embedding_dir}/"sigma.csv.gz" already exists
+	echo ${embedding_dir}/"mu.csv.gz" already exists
+	echo ${embedding_dir}/"sigma.csv.gz" already exists
 
 fi
