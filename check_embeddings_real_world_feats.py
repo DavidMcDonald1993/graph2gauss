@@ -18,8 +18,8 @@ def main():
         datasets, dims, seeds, exps, ks, matrices, scales
     ):
         embedding_directory = os.path.join(
-            "embeddings", "feats",
-            dataset, exp, 
+            "embeddings", 
+            dataset, "feats", exp, 
             "scale={}".format(scale),
             "k={:02d}".format(k),
             "seed={:03d}".format(seed),
