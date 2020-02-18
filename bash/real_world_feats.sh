@@ -10,7 +10,7 @@
 
 datasets=(cora_ml citeseer pubmed)
 dims=(2 5 10 25 50)
-seeds=({00..29})
+seeds=({0..29})
 ks=(03)
 exps=(lp_experiment recon_experiment rn_experiment)
 

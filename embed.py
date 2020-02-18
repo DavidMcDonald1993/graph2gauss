@@ -132,8 +132,8 @@ def main():
 	
 	if features is None:
 		print ("using identity features")
-		features = np.identity(len(graph))
-		X = sp.csr_matrix(features)
+		features = [np.identity(len(graph))] * 2
+		X = sp.csr_matrix(features[0])
 	else: 
 		assert isinstance(features, tuple)
 		assert len(features) == 2
@@ -157,8 +157,8 @@ def main():
 	sigma_filename = os.path.join(args.embedding_path, 
 		"sigma.csv")
 
-	mu_df = pd.DataFrame(mu, index=sorted(graph.nodes))
-	sigma_df = pd.DataFrame(sigma, index=sorted(graph.nodes))
+	mu_df = pd.DataFrame(mu, )
+	sigma_df = pd.DataFrame(sigma, )
 
 	print ("saving mu to", mu_filename)
 	mu_df.to_csv(mu_filename)
