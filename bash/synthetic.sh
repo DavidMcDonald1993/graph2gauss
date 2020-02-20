@@ -38,7 +38,7 @@ echo $dataset $dim $seed $k $exp
 data_dir=../HEDNet/datasets/synthetic_scale_free/${dataset}
 if [ $exp == "recon_experiment" ]
 then 
-	edgelist=${data_dir}/edgelist.tsv
+	edgelist=${data_dir}/edgelist.tsv.gz
 else 
 	edgelist=$(printf ../HEDNet/edgelists/synthetic_scale_free/${dataset}/seed=%03d/training_edges/edgelist.tsv ${seed})
 fi

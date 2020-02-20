@@ -38,7 +38,7 @@ echo $dataset $dim $seed $k $exp
 data_dir=../HEADNET/datasets/${dataset}
 if [ $exp == "recon_experiment" ]
 then 
-	edgelist=${data_dir}/edgelist.tsv
+	edgelist=${data_dir}/edgelist.tsv.gz
 elif [ $exp == "rn_experiment" ]
 then 
     edgelist=$(printf ../HEADNET/nodes/${dataset}/seed=%03d/training_edges/edgelist.tsv ${seed})

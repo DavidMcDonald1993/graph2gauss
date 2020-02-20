@@ -39,7 +39,7 @@ def load_data(args):
 
 		print ("loading features from {}".format(features_filename))
 
-		if features_filename.endswith(".csv"):
+		if features_filename.endswith(".csv") or features_filename.endswith(".csv.gz"):
 			features = pd.read_csv(features_filename, index_col=0, sep=",")
 			features = [features.reindex(sorted(graph)).values, 
 				features.reindex(sorted(features.index)).values]
@@ -48,11 +48,15 @@ def load_data(args):
 			# scaler.fit(features[0])
 			# features = list(map(scaler.transform,
 			# 	features))
+			features = tuple(map(sp.csr_matrix, features))
+		elif features_filename.endswith(".npz"):
+
+			features = sp.load_npz(features_filename)
+			assert isinstance(features, sp.csr_matrix)
+
+			features = (features[sorted(graph)], features)
 		else:
 			raise Exception
-
-		from scipy.sparse import csr_matrix
-		features = tuple(map(csr_matrix, features))
 
 		print ("training features shape is {}".format(features[0].shape))
 		print ("all features shape is {}\n".format(features[1].shape))
@@ -64,7 +68,7 @@ def load_data(args):
 
 		print ("loading labels from {}".format(labels_filename))
 
-		if labels_filename.endswith(".csv"):
+		if labels_filename.endswith(".csv") or labels_filename.endswith(".csv.gz"):
 			labels = pd.read_csv(labels_filename, index_col=0, sep=",")
 			labels = labels.reindex(sorted(graph.nodes())).values.astype(int)#.flatten()
 			assert len(labels.shape) == 2
