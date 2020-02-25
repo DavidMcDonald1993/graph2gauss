@@ -6,7 +6,7 @@
 #SBATCH --array=0-1499
 #SBATCH --time=10-00:00:00
 #SBATCH --ntasks=1
-#SBATCH --mem=20G
+#SBATCH --mem=5G
 
 datasets=({00..29})
 dims=(2 5 10 25 50)
