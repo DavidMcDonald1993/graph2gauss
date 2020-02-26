@@ -133,10 +133,13 @@ def main():
 	graph, features, _ = load_data(args)
 
 	A = nx.adjacency_matrix(graph, nodelist=sorted(graph))
+
+	del graph
 	
 	if features is None:
 		print ("using identity features")
-		features = [sp.csr_matrix(sp.identity(len(graph)))] * 2
+		N = A.shape[0]
+		features = [sp.csr_matrix(sp.identity(N))] * 2
 	else: 
 		assert isinstance(features, tuple)
 		assert len(features) == 2
