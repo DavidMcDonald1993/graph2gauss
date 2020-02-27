@@ -22,16 +22,22 @@ def load_data(args):
 	features_filename = args.features
 	labels_filename = args.labels
 
-	graph = nx.read_weighted_edgelist(edgelist_filename, delimiter="\t", nodetype=int,
+	print ("Reading graph from", edgelist_filename)
+
+	graph = nx.read_weighted_edgelist(edgelist_filename, 
+		delimiter="\t", nodetype=int,
 		create_using=nx.DiGraph() if args.directed else nx.Graph())
 
-	zero_weight_edges = [(u, v) for u, v, w in graph.edges(data="weight") if w == 0.]
-	print ("removing", len(zero_weight_edges), "edges with 0. weight")
+	print ("Read graph")
+
+	zero_weight_edges = ((u, v) for u, v, w in graph.edges(data="weight") if w == 0.)
 	graph.remove_edges_from(zero_weight_edges)
 
-	print ("ensuring all weights are positive")
-	nx.set_edge_attributes(graph, name="weight", values={edge: abs(weight) 
-		for edge, weight in nx.get_edge_attributes(graph, name="weight").items()})
+	nx.set_edge_attributes(graph, name="weight",
+		values={edge: np.int8(weight) 
+		for edge, weight in nx.get_edge_attributes(graph, "weight").items()})
+
+	sorted_nodes = sorted(graph)
 
 	print ("number of nodes: {}\nnumber of edges: {}\n".format(len(graph), len(graph.edges())))
 
@@ -41,20 +47,16 @@ def load_data(args):
 
 		if features_filename.endswith(".csv") or features_filename.endswith(".csv.gz"):
 			features = pd.read_csv(features_filename, index_col=0, sep=",")
-			features = [features.reindex(sorted(graph)).values, 
+			features = [features.reindex(sorted_nodes).values, 
 				features.reindex(sorted(features.index)).values]
 			print ("no scaling applied")
-			# scaler = StandardScaler()
-			# scaler.fit(features[0])
-			# features = list(map(scaler.transform,
-			# 	features))
 			features = tuple(map(sp.csr_matrix, features))
 		elif features_filename.endswith(".npz"):
 
 			features = sp.load_npz(features_filename)
 			assert isinstance(features, sp.csr_matrix)
 
-			features = (features[sorted(graph)], features)
+			features = (features[sorted_nodes], features)
 		else:
 			raise Exception
 
@@ -70,12 +72,12 @@ def load_data(args):
 
 		if labels_filename.endswith(".csv") or labels_filename.endswith(".csv.gz"):
 			labels = pd.read_csv(labels_filename, index_col=0, sep=",")
-			labels = labels.reindex(sorted(graph.nodes())).values.astype(int)#.flatten()
+			labels = labels.reindex(sorted_nodes).values.astype(int)
 			assert len(labels.shape) == 2
 		elif labels_filename.endswith(".pkl"):
 			with open(labels_filename, "rb") as f:
 				labels = pkl.load(f)
-			labels = np.array([labels[n] for n in sorted(graph.nodes())], dtype=np.int)
+			labels = np.array([labels[n] for n in sorted_nodes], dtype=np.int)
 		else:
 			raise Exception
 
@@ -84,8 +86,13 @@ def load_data(args):
 	else:
 		labels = None
 
-	graph = nx.convert_node_labels_to_integers(graph, 
-		ordering="sorted")
+	# graph = nx.convert_node_labels_to_integers(graph, 
+	# 	ordering="sorted")
+
+	print ("Converting graph to sparse adjacency matrix")
+	graph = nx.adjacency_matrix(graph,
+		nodelist=sorted_nodes)
+	print ("Completed adjacency matrix")
 
 	return graph, features, labels
 
@@ -132,10 +139,8 @@ def main():
 
 	graph, features, _ = load_data(args)
 
-	A = nx.adjacency_matrix(graph, nodelist=sorted(graph))
+	assert isinstance(graph, sp.csr_matrix)
 
-	del graph
-	
 	if features is None:
 		print ("using identity features")
 		N = A.shape[0]
@@ -143,12 +148,16 @@ def main():
 	else: 
 		assert isinstance(features, tuple)
 		assert len(features) == 2
+	
 	X = features[0]
+
 	if not isinstance(X, sp.csr_matrix):
 		X = sp.csr_matrix(X)
 
-	g2g = Graph2Gauss(A=A, X=X, L=args.embedding_dim, n_hidden=[128],
-		K=args.k, verbose=True, p_val=0.0, p_test=0.0, p_nodes=0,
+	g2g = Graph2Gauss(A=graph, X=X, L=args.embedding_dim, 
+		n_hidden=[128],
+		K=args.k, verbose=True, 
+		p_val=0.0, p_test=0.0, p_nodes=0,
 		seed=args.seed, scale=args.scale=="True")
 	sess = g2g.train()
 
