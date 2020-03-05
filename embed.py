@@ -143,7 +143,7 @@ def main():
 
 	if features is None:
 		print ("using identity features")
-		N = len(graph)
+		N = graph.shape[0]
 		features = [sp.csr_matrix(sp.identity(N))] * 2
 	else: 
 		assert isinstance(features, tuple)
