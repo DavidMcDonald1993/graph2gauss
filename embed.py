@@ -30,7 +30,7 @@ def load_data(args):
 
 	print ("Read graph")
 
-	zero_weight_edges = ((u, v) for u, v, w in graph.edges(data="weight") if w == 0.)
+	zero_weight_edges = [(u, v) for u, v, w in graph.edges(data="weight") if w == 0.]
 	graph.remove_edges_from(zero_weight_edges)
 
 	nx.set_edge_attributes(graph, name="weight",
