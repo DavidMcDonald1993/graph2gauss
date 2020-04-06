@@ -9,9 +9,9 @@
 #SBATCH --mem=25G
 
 datasets=(twitter gplus)
-dims=(2 5 10 25 50)
+dims=(5 10 25 50)
 seeds=({0..29})
-ks=(03)
+ks=(01)
 exps=(lp_experiment recon_experiment rn_experiment)
 
 num_datasets=${#datasets[@]}
@@ -48,14 +48,13 @@ fi
 
 echo edgelist is $edgelist
 
-features=${data_dir}/feats.npz
+features=${data_dir}/feats_top_10000.npz
 
 embedding_dir=embeddings/${dataset}/feats/${exp}
 
 embedding_dir=$(printf "${embedding_dir}/scale=${scale}/k=${k}/seed=%03d/dim=%03d" ${seed} ${dim})
 
 echo embedding directory is $embedding_dir
-
 
 if [ ! -f ${embedding_dir}/"mu.csv.gz" ]
 then 
@@ -77,6 +76,7 @@ then
 
 	echo ${embedding_dir}/"mu.csv" exists compressing
 	gzip ${embedding_dir}/"mu.csv"
+	echo ${embedding_dir}/"sigma.csv" exists compressing
 	gzip ${embedding_dir}/"sigma.csv"
 
 else
