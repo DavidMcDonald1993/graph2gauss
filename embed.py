@@ -34,7 +34,7 @@ def load_data(args):
 	graph.remove_edges_from(zero_weight_edges)
 
 	nx.set_edge_attributes(graph, name="weight",
-		values={edge: np.int8(weight) 
+		values={edge: np.int32(weight) 
 		for edge, weight in nx.get_edge_attributes(graph, "weight").items()})
 
 	sorted_nodes = sorted(graph)
@@ -144,10 +144,9 @@ def main():
 	if features is None:
 		print ("using identity features")
 		N = graph.shape[0]
-		features = [sp.csr_matrix(sp.identity(N))] * 2
-	else: 
-		assert isinstance(features, tuple)
-		assert len(features) == 2
+		features = tuple([sp.csr_matrix(sp.identity(N))] * 2)
+	assert isinstance(features, tuple)
+	assert len(features) == 2
 	
 	X = features[0]
 
