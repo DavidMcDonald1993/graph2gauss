@@ -23,23 +23,33 @@ def load_data(args):
 	labels_filename = args.labels
 
 	print ("Reading graph from", edgelist_filename)
+	if edgelist_filename.endswith(".npz"):
+		print ("graph is sparse adjacency matrix")
+		graph = sp.load_npz(edgelist_filename).astype(np.int32)
 
-	graph = nx.read_weighted_edgelist(edgelist_filename, 
-		delimiter="\t", nodetype=int,
-		create_using=nx.DiGraph() if args.directed else nx.Graph())
+		print ("number of nodes:", graph.shape[0])
+		print ("number of edges", graph.sum())
 
-	print ("Read graph")
+	elif edgelist_filename.endswith(".csv") or edgelist_filename.endswith(".csv.gz"):
 
-	zero_weight_edges = [(u, v) for u, v, w in graph.edges(data="weight") if w == 0.]
-	graph.remove_edges_from(zero_weight_edges)
+		graph = nx.read_weighted_edgelist(edgelist_filename, 
+			delimiter="\t", nodetype=int,
+			create_using=nx.DiGraph() if args.directed else nx.Graph())
 
-	nx.set_edge_attributes(graph, name="weight",
-		values={edge: np.int32(weight) 
-		for edge, weight in nx.get_edge_attributes(graph, "weight").items()})
+		print ("Read graph")
 
-	sorted_nodes = sorted(graph)
+		zero_weight_edges = [(u, v) for u, v, w in graph.edges(data="weight") if w == 0.]
+		graph.remove_edges_from(zero_weight_edges)
 
-	print ("number of nodes: {}\nnumber of edges: {}\n".format(len(graph), len(graph.edges())))
+		nx.set_edge_attributes(graph, name="weight",
+			values={edge: np.int32(weight) 
+			for edge, weight in nx.get_edge_attributes(graph, "weight").items()})
+
+
+		print ("number of nodes: {}\nnumber of edges: {}\n".format(len(graph), len(graph.edges())))
+
+	else:
+		raise NotImplementedError
 
 	if features_filename is not None:
 
@@ -47,21 +57,19 @@ def load_data(args):
 
 		if features_filename.endswith(".csv") or features_filename.endswith(".csv.gz"):
 			features = pd.read_csv(features_filename, index_col=0, sep=",")
-			features = [features.reindex(sorted_nodes).values, 
-				features.reindex(sorted(features.index)).values]
+			features = features.reindex(sorted(features.index)).values
 			print ("no scaling applied")
-			features = tuple(map(sp.csr_matrix, features))
+			features = sp.csr_matrix(features)
+
 		elif features_filename.endswith(".npz"):
 
 			features = sp.load_npz(features_filename)
 			assert isinstance(features, sp.csr_matrix)
 
-			features = (features[sorted_nodes], features)
 		else:
 			raise Exception
 
-		print ("training features shape is {}".format(features[0].shape))
-		print ("all features shape is {}\n".format(features[1].shape))
+		print ("features shape is {}\n".format(features.shape))
 
 	else: 
 		features = None
@@ -85,14 +93,6 @@ def load_data(args):
 
 	else:
 		labels = None
-
-	# graph = nx.convert_node_labels_to_integers(graph, 
-	# 	ordering="sorted")
-
-	print ("Converting graph to sparse adjacency matrix")
-	graph = nx.adjacency_matrix(graph,
-		nodelist=sorted_nodes)
-	print ("Completed adjacency matrix")
 
 	return graph, features, labels
 
@@ -144,11 +144,9 @@ def main():
 	if features is None:
 		print ("using identity features")
 		N = graph.shape[0]
-		features = tuple([sp.csr_matrix(sp.identity(N))] * 2)
-	assert isinstance(features, tuple)
-	assert len(features) == 2
+		features =sp.csr_matrix(sp.identity(N))
 	
-	X = features[0]
+	X = features
 
 	if not isinstance(X, sp.csr_matrix):
 		X = sp.csr_matrix(X)
@@ -161,7 +159,7 @@ def main():
 	sess = g2g.train()
 
 	# predict using entire features matrix
-	all_feats = sparse_feeder(features[1])
+	all_feats = sparse_feeder(features)
 
 	mu, sigma = sess.run([g2g.mu, g2g.sigma],
 		feed_dict={g2g.X: all_feats})

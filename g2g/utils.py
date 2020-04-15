@@ -422,10 +422,10 @@ def sample_all_hops(hops, nodes=None):
         nodes = np.arange(N)
 
     return np.vstack((nodes,
-                      np.array([[-1 if len(x) == 0 else np.random.choice(x) for x in hops[h].rows[nodes]]
-                                for h in hops.keys() if h != -1]),
-                      sample_last_hop(hops[-1], nodes)
-                      )).T
+        np.array([[-1 if len(x) == 0 else np.random.choice(x) for x in hops[h].rows[nodes]]
+                for h in hops.keys() if h != -1]),
+        sample_last_hop(hops[-1], nodes)
+        )).T
 
 
 def to_triplets(sampled_hops, scale_terms):

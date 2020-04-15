@@ -3,15 +3,15 @@
 #SBATCH --job-name=G2GFEATS
 #SBATCH --output=G2GFEATS_%A_%a.out
 #SBATCH --error=G2GFEATS_%A_%a.err
-#SBATCH --array=0-1349
+#SBATCH --array=0-2699
 #SBATCH --time=10-00:00:00
 #SBATCH --ntasks=1
 #SBATCH --mem=5G
 
 datasets=(cora_ml citeseer pubmed)
-dims=(2 5 10 25 50)
+dims=(5 10 25 50)
 seeds=({0..29})
-ks=(03)
+ks=(01 03)
 exps=(lp_experiment recon_experiment rn_experiment)
 
 num_datasets=${#datasets[@]}
@@ -38,24 +38,23 @@ echo $dataset $dim $seed $k $exp
 data_dir=../HEADNET/datasets/${dataset}
 if [ $exp == "recon_experiment" ]
 then 
-	edgelist=${data_dir}/edgelist.tsv.gz
+	edgelist=${data_dir}/graph.npz
 elif [ $exp == "rn_experiment" ]
 then 
-    edgelist=$(printf ../HEADNET/nodes/${dataset}/seed=%03d/training_edges/edgelist.tsv ${seed})
+    edgelist=$(printf ../HEADNET/nodes/${dataset}/seed=%03d/training_edges/graph.npz ${seed})
 else 
-	edgelist=$(printf ../HEADNET/edgelists/${dataset}/seed=%03d/training_edges/edgelist.tsv ${seed})
+	edgelist=$(printf ../HEADNET/edgelists/${dataset}/seed=%03d/training_edges/graph.npz ${seed})
 fi
 
 echo edgelist is $edgelist
 
-features=${data_dir}/feats.csv.gz
+features=${data_dir}/feats.npz
 
 embedding_dir=embeddings/${dataset}/feats/${exp}
 
 embedding_dir=$(printf "${embedding_dir}/scale=${scale}/k=${k}/seed=%03d/dim=%03d" ${seed} ${dim})
 
 echo embedding directory is $embedding_dir
-
 
 if [ ! -f ${embedding_dir}/"mu.csv.gz" ]
 then 
@@ -77,6 +76,7 @@ then
 
 	echo ${embedding_dir}/"mu.csv" exists compressing
 	gzip ${embedding_dir}/"mu.csv"
+	echo ${embedding_dir}/"sigma.csv" exists compressing
 	gzip ${embedding_dir}/"sigma.csv"
 
 else

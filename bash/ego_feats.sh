@@ -3,15 +3,15 @@
 #SBATCH --job-name=G2GEGOFEATS
 #SBATCH --output=G2GEGOFEATS_%A_%a.out
 #SBATCH --error=G2GEGOFEATS_%A_%a.err
-#SBATCH --array=0-899
+#SBATCH --array=0-719
 #SBATCH --time=10-00:00:00
 #SBATCH --ntasks=1
-#SBATCH --mem=25G
+#SBATCH --mem=10G
 
 datasets=(twitter gplus)
 dims=(5 10 25 50)
 seeds=({0..29})
-ks=(01)
+ks=(03)
 exps=(lp_experiment recon_experiment rn_experiment)
 
 num_datasets=${#datasets[@]}
@@ -38,12 +38,12 @@ echo $dataset $dim $seed $k $exp
 data_dir=../HEADNET/datasets/${dataset}
 if [ $exp == "recon_experiment" ]
 then 
-	edgelist=${data_dir}/edgelist.tsv.gz
+	edgelist=${data_dir}/graph.npz
 elif [ $exp == "rn_experiment" ]
 then 
-    edgelist=$(printf ../HEADNET/nodes/${dataset}/seed=%03d/training_edges/edgelist.tsv ${seed})
+    edgelist=$(printf ../HEADNET/nodes/${dataset}/seed=%03d/training_edges/graph.npz ${seed})
 else 
-	edgelist=$(printf ../HEADNET/edgelists/${dataset}/seed=%03d/training_edges/edgelist.tsv ${seed})
+	edgelist=$(printf ../HEADNET/edgelists/${dataset}/seed=%03d/training_edges/graph.npz ${seed})
 fi
 
 echo edgelist is $edgelist
