@@ -3,15 +3,15 @@
 #SBATCH --job-name=G2GSYNTHETIC
 #SBATCH --output=G2GSYNTHETIC_%A_%a.out
 #SBATCH --error=G2GSYNTHETIC_%A_%a.err
-#SBATCH --array=0-1499
+#SBATCH --array=0-479
 #SBATCH --time=10-00:00:00
 #SBATCH --ntasks=1
 #SBATCH --mem=5G
 
 datasets=({00..29})
-dims=(2 5 10 25 50)
+dims=(5 10 25 50)
 seeds=(0)
-ks=(02 03 04 05 06)
+ks=(01 03)
 exps=(lp_experiment recon_experiment)
 
 num_datasets=${#datasets[@]}
@@ -35,12 +35,12 @@ exp=${exps[$exp_id]}
 
 echo $dataset $dim $seed $k $exp
 
-data_dir=../HEDNet/datasets/synthetic_scale_free/${dataset}
+data_dir=../HEADNET/datasets/synthetic_scale_free/${dataset}
 if [ $exp == "recon_experiment" ]
 then 
-	edgelist=${data_dir}/edgelist.tsv.gz
+	edgelist=${data_dir}/graph.npz
 else 
-	edgelist=$(printf ../HEDNet/edgelists/synthetic_scale_free/${dataset}/seed=%03d/training_edges/edgelist.tsv ${seed})
+	edgelist=$(printf ../HEADNET/edgelists/synthetic_scale_free/${dataset}/seed=%03d/training_edges/graph.npz ${seed})
 fi
 
 echo edgelist is $edgelist

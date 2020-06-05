@@ -30,7 +30,7 @@ def load_data(args):
 		print ("number of nodes:", graph.shape[0])
 		print ("number of edges", graph.sum())
 
-	elif edgelist_filename.endswith(".csv") or edgelist_filename.endswith(".csv.gz"):
+	elif edgelist_filename.endswith(".tsv") or edgelist_filename.endswith(".tsv.gz"):
 
 		graph = nx.read_weighted_edgelist(edgelist_filename, 
 			delimiter="\t", nodetype=int,
@@ -62,7 +62,7 @@ def load_data(args):
 			features = sp.csr_matrix(features)
 
 		elif features_filename.endswith(".npz"):
-
+			print ("features is sparse matrix")
 			features = sp.load_npz(features_filename)
 			assert isinstance(features, sp.csr_matrix)
 
@@ -144,25 +144,23 @@ def main():
 	if features is None:
 		print ("using identity features")
 		N = graph.shape[0]
-		features =sp.csr_matrix(sp.identity(N))
+		features = sp.csr_matrix(sp.identity(N))
 	
 	X = features
 
 	if not isinstance(X, sp.csr_matrix):
 		X = sp.csr_matrix(X)
 
-	g2g = Graph2Gauss(A=graph, X=X, L=args.embedding_dim, 
+	g2g = Graph2Gauss(
+		A=graph, X=X, L=args.embedding_dim, 
 		n_hidden=[128],
 		K=args.k, verbose=True, 
 		p_val=0.0, p_test=0.0, p_nodes=0,
 		seed=args.seed, scale=args.scale=="True")
 	sess = g2g.train()
 
-	# predict using entire features matrix
-	all_feats = sparse_feeder(features)
 
-	mu, sigma = sess.run([g2g.mu, g2g.sigma],
-		feed_dict={g2g.X: all_feats})
+	mu, sigma = sess.run([g2g.mu, g2g.sigma],		)
 
 	mu_filename = os.path.join(args.embedding_path, 
 		"mu.csv")

@@ -56,10 +56,10 @@ class Graph2Gauss:
         if p_nodes > 0:
             A = self.__setup_inductive(A, X, p_nodes)
         else:
-            # self.X = tf.SparseTensor(*sparse_feeder(X))
-            # self.feed_dict = None
-            self.X = tf.sparse_placeholder(tf.float32)
-            self.feed_dict = {self.X: sparse_feeder(X)}
+            self.X = tf.SparseTensor(*sparse_feeder(X))
+            self.feed_dict = None
+            # self.X = tf.sparse_placeholder(tf.float32)
+            # self.feed_dict = {self.X: sparse_feeder(X)}
 
 
         self.N, self.D = X.shape
