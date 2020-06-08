@@ -6,12 +6,12 @@ from pandas.errors import EmptyDataError
 
 def main():
 
-    datasets = ("twitter", "gplus")
-    feats = ("nofeats", "feats")
-    dims = ( 5, 10, 25, 50)
+    datasets = ("cora_ml", "citeseer", "pubmed", "cora", )
+    feats = ( "feats")
+    dims = (5, 10, 25, 50)
     seeds = range(30)
-    exps = ["recon_experiment", "lp_experiment", "rn_experiment"]
-    ks = (1, )
+    exps = ["rn_experiment", ]
+    ks = (1, 3, )
     matrices = ["mu", "sigma"]
     scales = ("False", )
 
