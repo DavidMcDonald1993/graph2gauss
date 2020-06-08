@@ -7,7 +7,7 @@ from pandas.errors import EmptyDataError
 def main():
 
     datasets = ("cora_ml", "citeseer", "pubmed", "cora", )
-    feats = ( "feats")
+    feats = ("feats", )
     dims = (5, 10, 25, 50)
     seeds = range(30)
     exps = ["rn_experiment", ]
