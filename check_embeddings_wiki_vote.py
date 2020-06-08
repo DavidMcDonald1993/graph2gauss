@@ -6,20 +6,21 @@ from pandas.errors import EmptyDataError
 
 def main():
 
-    datasets = ("cora_ml", "citeseer", "pubmed", "cora", "wiki_vote")
-    dims = (2, 5, 10, 25, 50)
+    datasets = ("wiki_vote")
+    feats = ("nofeats", )
+    dims = ( 5, 10, 25, 50)
     seeds = range(30)
-    exps = ["recon_experiment", "lp_experiment"]
-    ks = (3, )
+    exps = ("recon_experiment", "lp_experiment", )
+    ks = (1, 3, )
     matrices = ["mu", "sigma"]
     scales = ("False", )
 
-    for dataset, dim, seed, exp, k, matrix, scale in itertools.product(
-        datasets, dims, seeds, exps, ks, matrices, scales
+    for dataset, feat, dim, seed, exp, k, matrix, scale in itertools.product(
+        datasets, feats, dims, seeds, exps, ks, matrices, scales
     ):
         embedding_directory = os.path.join(
             "embeddings", 
-            dataset, "nofeats", exp, 
+            dataset, feat, exp, 
             "scale={}".format(scale),
             "k={:02d}".format(k),
             "seed={:03d}".format(seed),
