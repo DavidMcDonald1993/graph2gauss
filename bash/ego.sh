@@ -76,7 +76,7 @@ then
 		if [ ${feat} == feats ]
 		then 
 			args=${args}" --features ${features}"
-
+		fi
 		python embed.py ${args}
 
 	fi
